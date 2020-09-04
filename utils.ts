@@ -33,15 +33,24 @@ export const getApps = (filter: string) => {
   return { apps, total }
 }
 
-export const run = async (cmd: string[]) => {
+export const scoop = async (args: string[]) => {
+  const { stdout } = Deno.run({
+    cmd: ['scoop.cmd', ...args],
+    stdout: 'piped',
+  })
+  const iter = Deno.iter(stdout)
+
+  for await (const chunk of iter) {
+    Deno.stdout.writeSync(chunk)
+  }
+}
+
+export const git = async (path: string, ...args: string[]) => {
   const output = await Deno.run({
-    cmd,
+    // https://git-scm.com/docs/git#Documentation/git.txt--Cltpathgt
+    cmd: ['git', '-C', path, ...args],
     stdout: 'piped',
   }).output()
 
   return new TextDecoder('utf-8').decode(output).replace(/\n$/, '')
 }
-
-// https://git-scm.com/docs/git#Documentation/git.txt--Cltpathgt
-export const git = (path: string, ...args: string[]) =>
-  run(['git', '-C', path, ...args])

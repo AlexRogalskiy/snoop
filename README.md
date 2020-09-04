@@ -15,6 +15,8 @@ A helper for [Scoop](https://scoop-docs.now.sh/).
 deno run --unstable --allow-env --allow-read --allow-run .\index.ts [arguments]
 ```
 
-- `list [filter]`
-- `bucket list`
-- `bucket known`
+- `bucket list`: show remote URL
+- `bucket known`: show bucket URL
+- `install`: automatically uninstall if installation failed
+- `list`: show installed apps count
+- `list <filter>`: filter installed apps by name

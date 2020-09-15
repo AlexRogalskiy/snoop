@@ -1,5 +1,4 @@
-import { readJsonSync } from './deps.ts'
-import { IInstall, IManifest } from './types.ts'
+import type { IInstall, IManifest } from './types.ts'
 
 export const SCOOP_DIR =
   Deno.env.get('SCOOP') || `${Deno.env.get('HOME')}/scoop`
@@ -10,14 +9,17 @@ export const MODULES_DIR = `${SCOOP_DIR}/modules`
 export const PERSIST_DIR = `${SCOOP_DIR}/persist`
 export const SHIMS_DIR = `${SCOOP_DIR}/shims`
 
+export const readJson = <T>(path: string | URL): T =>
+  JSON.parse(Deno.readTextFileSync(path))
+
 export const getAppDir = (app: string, version = 'current') =>
   `${APPS_DIR}/${app}/${version}`
 
 export const getAppManifest = (app: string) =>
-  readJsonSync(`${getAppDir(app)}/manifest.json`) as IManifest
+  readJson<IManifest>(`${getAppDir(app)}/manifest.json`)
 
 export const getAppInstall = (app: string) =>
-  readJsonSync(`${getAppDir(app)}/install.json`) as IInstall
+  readJson<IInstall>(`${getAppDir(app)}/install.json`)
 
 export const getApps = (filter: string) => {
   const apps: string[] = []

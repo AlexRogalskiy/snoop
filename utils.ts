@@ -22,18 +22,16 @@ export const getAppManifest = (app: string) =>
 export const getAppInstall = (app: string) =>
   readJson<IInstall>(`${getAppDir(app)}/install.json`)
 
-export const filterApps = (filter: string, dir = APPS_DIR) => {
-  const apps: string[] = []
+export const filterDirs = (filter = '', dir = APPS_DIR): [string[], number] => {
+  const dirs: string[] = []
   let total = 0
 
   for (const { name } of Deno.readDirSync(dir)) {
-    if (name !== 'scoop') {
-      total++
-      if (name.includes(filter)) apps.push(name)
-    }
+    if (name.toLowerCase().includes(filter.toLowerCase())) dirs.push(name)
+    total++
   }
 
-  return { apps, total }
+  return [dirs, total]
 }
 
 export const scoop = async (args: string[]) => {

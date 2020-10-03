@@ -1,24 +1,29 @@
-import { BUCKETS_DIR, getAppDir, git, readJson } from '../utils.ts'
+import { filterDirs, BUCKETS_DIR, getAppDir, git, readJson } from '../utils.ts'
 import { existsSync, cyan, yellow, outdent } from '../deps.ts'
 
-export const listBucket = async () => {
-  const buckets: string[] = []
+export const listBucket = async (filter = '') => {
+  const [buckets, total] = filterDirs(filter, BUCKETS_DIR)
+  const origins: string[] = []
 
-  for (const { name } of Deno.readDirSync(BUCKETS_DIR)) {
-    const remote = await git(
-      `${BUCKETS_DIR}/${name}`,
+  for (const bucket of buckets) {
+    const origin = await git(
+      `${BUCKETS_DIR}/${bucket}`,
       'remote',
       'get-url',
       'origin'
     )
 
-    buckets.push(`${name}: ${cyan(remote)}`)
+    origins.push(origin)
   }
 
   console.log(outdent`
-    Buckets (${buckets.length}):
+    Buckets${filter ? ` matching '${filter}'` : ''} (${
+    filter ? `${buckets.length}/` : ''
+  }${total}):
 
-    ${buckets.join('\n')}
+    ${buckets
+      .map((bucket, index) => `${bucket}: ${cyan(origins[index])}`)
+      .join('\n')}
   `)
 }
 

@@ -9,7 +9,7 @@ const { args } = Deno
 
 ;(() => {
   if (args[0] === 'bucket') {
-    if (args[1] === 'list') return listBucket()
+    if (args[1] === 'list') return listBucket(args[2])
     if (args[1] === 'known') return knownBucket()
   }
   if (args[0] === 'install') return install(args)

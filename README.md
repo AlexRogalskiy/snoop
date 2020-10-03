@@ -16,6 +16,7 @@ deno run --unstable --allow-env --allow-read --allow-write --allow-run .\index.t
 ```
 
 - `bucket list`: show bucket count and remote URL
+- `bucket list <filter>`: filter buckets by name
 - `bucket known`: show bucket count, remote URL and whether it's added
 - `install`: automatically uninstall if installation failed
 - `list`: list apps with count

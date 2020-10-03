@@ -1,9 +1,9 @@
-import { filterApps, PERSIST_DIR, readLine, write } from '../utils.ts'
+import { filterDirs, PERSIST_DIR, readLine, write } from '../utils.ts'
 import { yellow, outdent } from '../deps.ts'
 
 export const listPersists = (filter = '') => {
-  const { apps } = filterApps(filter)
-  const { apps: persists, total } = filterApps(filter, PERSIST_DIR)
+  const [apps] = filterDirs(filter)
+  const [persists, total] = filterDirs(filter, PERSIST_DIR)
 
   console.log(
     `Persists${filter ? ` matching '${filter}'` : ''} (${
@@ -19,8 +19,8 @@ export const listPersists = (filter = '') => {
 }
 
 export const cleanPersists = async () => {
-  const { apps } = filterApps('')
-  const uninstalled = filterApps('', PERSIST_DIR).apps.filter(
+  const [apps] = filterDirs()
+  const uninstalled = filterDirs('', PERSIST_DIR)[0].filter(
     (app) => !apps.includes(app)
   )
 

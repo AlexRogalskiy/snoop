@@ -12,11 +12,14 @@ A helper for [Scoop](https://scoop-docs.now.sh/).
 ## Commands
 
 ```
-deno run --unstable --allow-env --allow-read --allow-run .\index.ts [arguments]
+deno run --unstable --allow-env --allow-read --allow-write --allow-run .\index.ts [arguments]
 ```
 
-- `bucket list`: show remote URL
-- `bucket known`: show bucket URL
+- `bucket list`: show bucket count and remote URL
+- `bucket known`: show bucket count, remote URL and whether it's added
 - `install`: automatically uninstall if installation failed
-- `list`: show installed apps count
-- `list <filter>`: filter installed apps by name
+- `list`: list apps with count
+- `list <filter>`: filter apps by name
+- `persist clean`: clean obsolete persists
+- `persist list`: list persists with count
+- `persist list <filter>`: filter persists by name

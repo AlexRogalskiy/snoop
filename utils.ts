@@ -1,4 +1,5 @@
 import type { IInstall, IManifest } from './types.ts'
+import { readLines } from './deps.ts'
 
 export const SCOOP_DIR =
   Deno.env.get('SCOOP') || `${Deno.env.get('HOME')}/scoop`
@@ -21,11 +22,11 @@ export const getAppManifest = (app: string) =>
 export const getAppInstall = (app: string) =>
   readJson<IInstall>(`${getAppDir(app)}/install.json`)
 
-export const getApps = (filter: string) => {
+export const filterApps = (filter: string, dir = APPS_DIR) => {
   const apps: string[] = []
   let total = 0
 
-  for (const { name } of Deno.readDirSync(APPS_DIR)) {
+  for (const { name } of Deno.readDirSync(dir)) {
     if (name !== 'scoop') {
       total++
       if (name.includes(filter)) apps.push(name)
@@ -54,5 +55,10 @@ export const git = async (path: string, ...args: string[]) => {
     stdout: 'piped',
   }).output()
 
-  return new TextDecoder('utf-8').decode(output).replace(/\n$/, '')
+  return new TextDecoder().decode(output).replace(/\n$/, '')
 }
+
+export const readLine = async () =>
+  ((await readLines(Deno.stdin).next()).value as string).replace('\r', '')
+export const write = (input: string) =>
+  Deno.stdout.writeSync(new TextEncoder().encode(input))

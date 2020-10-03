@@ -1,19 +1,17 @@
-import { getApps, getAppInstall, getAppManifest } from '../utils.ts'
-import { cyan, yellow } from '../deps.ts'
+import { filterApps, getAppInstall, getAppManifest } from '../utils.ts'
+import { cyan, yellow, outdent } from '../deps.ts'
 
-export const list = (filter = '') => {
-  const { apps, total } = getApps(filter)
+export const listApps = (filter = '') => {
+  const { apps, total } = filterApps(filter)
 
-  console.log(
-    `Installed apps${filter ? ` matching '${filter}'` : ''} (${
-      filter ? `${apps.length}/` : ''
-    }${total}):\n`
-  )
+  console.log(outdent`
+    Installed apps${filter ? ` matching '${filter}'` : ''} (${filter ? `${apps.length}/` : ''}${total}):
 
-  for (const app of apps) {
-    const { version } = getAppManifest(app)
-    const { bucket } = getAppInstall(app)
+    ${apps.map(app => {
+      const { version } = getAppManifest(app)
+      const { bucket } = getAppInstall(app)
 
-    console.log(`${app} ${cyan(version)} ${yellow(`[${bucket}]`)}`)
-  }
+      return `${app} ${cyan(version)} ${yellow(`[${bucket}]`)}`
+    }).join('\n')}
+  `)
 }

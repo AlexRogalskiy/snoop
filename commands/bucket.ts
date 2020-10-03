@@ -1,7 +1,9 @@
 import { BUCKETS_DIR, getAppDir, git, readJson } from '../utils.ts'
-import { existsSync, cyan, yellow } from '../deps.ts'
+import { existsSync, cyan, yellow, outdent } from '../deps.ts'
 
 export const listBucket = async () => {
+  const buckets: string[] = []
+
   for (const { name } of Deno.readDirSync(BUCKETS_DIR)) {
     const remote = await git(
       `${BUCKETS_DIR}/${name}`,
@@ -10,20 +12,31 @@ export const listBucket = async () => {
       'origin'
     )
 
-    console.log(`${name}: ${cyan(remote)}`)
+    buckets.push(`${name}: ${cyan(remote)}`)
   }
+
+  console.log(outdent`
+    Buckets (${buckets.length}):
+
+    ${buckets.join('\n')}
+  `)
 }
 
 export const knownBucket = () => {
-  const buckets = readJson<Record<string, string>>(
-    `${getAppDir('scoop')}/buckets.json`
+  const buckets = Object.entries(
+    readJson<Record<string, string>>(`${getAppDir('scoop')}/buckets.json`)
   )
 
-  for (const [name, location] of Object.entries(buckets)) {
-    console.log(
-      `${name}: ${cyan(location)}${
-        existsSync(`${BUCKETS_DIR}/${name}`) ? yellow(' [Added]') : ''
-      }`
-    )
-  }
+  console.log(outdent`
+    Known buckets (${buckets.length}):
+
+    ${buckets
+      .map(
+        ([name, location]) =>
+          `${name}: ${cyan(location)}${
+            existsSync(`${BUCKETS_DIR}/${name}`) ? yellow(' [Added]') : ''
+          }`
+      )
+      .join('\n')}
+  `)
 }

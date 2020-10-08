@@ -24,3 +24,7 @@ deno run --unstable --allow-env --allow-read --allow-write --allow-run .\index.t
 - `persist clean`: clean obsolete persists
 - `persist list`: list persists with count
 - `persist list <filter>`: filter persists by name
+
+## Related
+
+- [A fork of Scoop](https://github.com/Ash258/Scoop-Core) actively developed by [@Ash258](https://github.com/Ash258)

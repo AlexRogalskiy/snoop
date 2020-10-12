@@ -1,4 +1,4 @@
-import type { IInstall, IManifest } from './types.ts'
+import type { IInstall, IManifest, IScoopConfig } from './types.ts'
 import { readLines } from './deps.ts'
 
 export const SCOOP_DIR =
@@ -13,14 +13,24 @@ export const SHIMS_DIR = `${SCOOP_DIR}/shims`
 export const readJson = <T>(path: string | URL): T =>
   JSON.parse(Deno.readTextFileSync(path))
 
+export const getScoopConfig = () =>
+  readJson<IScoopConfig>(`${Deno.env.get('HOME')}/.config/scoop/config.json`)
+
+export const isShovel = () =>
+  getScoopConfig().SCOOP_REPO === 'https://github.com/Ash258/Scoop-Core'
+
 export const getAppDir = (app: string, version = 'current') =>
   `${APPS_DIR}/${app}/${version}`
 
 export const getAppManifest = (app: string) =>
-  readJson<IManifest>(`${getAppDir(app)}/manifest.json`)
+  readJson<IManifest>(
+    `${getAppDir(app)}/${isShovel() ? 'scoop-manifest.json' : 'manifest.json'}`
+  )
 
 export const getAppInstall = (app: string) =>
-  readJson<IInstall>(`${getAppDir(app)}/install.json`)
+  readJson<IInstall>(
+    `${getAppDir(app)}/${isShovel() ? 'scoop-install.json' : 'install.json'}`
+  )
 
 export const filterDirs = (filter = '', dir = APPS_DIR): [string[], number] => {
   const dirs: string[] = []

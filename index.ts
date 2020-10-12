@@ -19,7 +19,7 @@ switch (args[0]) {
     }
     break
   case 'install':
-    install(args)
+    install(args.slice(1))
     break
   case 'list':
     listApps(args[1])

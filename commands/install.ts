@@ -1,9 +1,13 @@
 import { scoop, getAppDir } from '../utils.ts'
 import { existsSync } from '../deps.ts'
 
-export const install = async (args: string[]) => {
-  await scoop(args)
-  if (!existsSync(getAppDir(args[1]))) {
-    scoop(['uninstall', args[1]])
+export const install = async (apps: string[]) => {
+  await scoop(['install', ...apps])
+
+  // Uninstall apps that fail to install
+  for (const app of apps) {
+    if (!existsSync(getAppDir(app))) {
+      scoop(['uninstall', app])
+    }
   }
 }

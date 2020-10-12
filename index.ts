@@ -7,22 +7,38 @@ import { outdent } from './deps.ts'
 
 const { args } = Deno
 
-;(() => {
-  if (args[0] === 'bucket') {
-    if (args[1] === 'list') return listBucket(args[2])
-    if (args[1] === 'known') return knownBucket()
-  }
-  if (args[0] === 'install') return install(args)
-  if (args[0] === 'list') return listApps(args[1])
-  if (args[0] === 'persist') {
-    if (args[1] === 'clean') return cleanPersists()
-    if (args[1] === 'list') return listPersists(args[2])
+switch (args[0]) {
+  case 'bucket':
+    switch (args[1]) {
+      case 'list':
+        listBucket(args[2])
+        break
+      case 'known':
+        knownBucket()
+        break
+    }
+    break
+  case 'install':
+    install(args)
+    break
+  case 'list':
+    listApps(args[1])
+    break
+  case 'persist':
+    switch (args[1]) {
+      case 'clean':
+        cleanPersists()
+        break
+      case 'list':
+        listPersists(args[2])
+        break
+    }
 
-    return console.log(outdent`
+    console.log(outdent`
       scoop persist: cmd '${args[1] || ''}' not supported
       Usage: scoop persist clean|list [<args>]
     `)
-  }
-
-  scoop(args)
-})()
+    break
+  default:
+    scoop(args)
+}

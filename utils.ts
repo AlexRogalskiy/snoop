@@ -1,5 +1,5 @@
 import type { IInstall, IManifest, IScoopConfig } from './types.ts'
-import { readLines } from './deps.ts'
+import { readJsonSync } from './deps.ts'
 
 export const SCOOP_DIR =
   Deno.env.get('SCOOP') || `${Deno.env.get('HOME')}/scoop`
@@ -10,11 +10,10 @@ export const MODULES_DIR = `${SCOOP_DIR}/modules`
 export const PERSIST_DIR = `${SCOOP_DIR}/persist`
 export const SHIMS_DIR = `${SCOOP_DIR}/shims`
 
-export const readJson = <T>(path: string | URL): T =>
-  JSON.parse(Deno.readTextFileSync(path))
-
 export const getScoopConfig = () =>
-  readJson<IScoopConfig>(`${Deno.env.get('HOME')}/.config/scoop/config.json`)
+  readJsonSync<IScoopConfig>(
+    `${Deno.env.get('HOME')}/.config/scoop/config.json`
+  )
 
 export const isShovel = () =>
   getScoopConfig().SCOOP_REPO === 'https://github.com/Ash258/Scoop-Core'
@@ -23,12 +22,12 @@ export const getAppDir = (app: string, version = 'current') =>
   `${APPS_DIR}/${app}/${version}`
 
 export const getAppManifest = (app: string) =>
-  readJson<IManifest>(
+  readJsonSync<IManifest>(
     `${getAppDir(app)}/${isShovel() ? 'scoop-manifest.json' : 'manifest.json'}`
   )
 
 export const getAppInstall = (app: string) =>
-  readJson<IInstall>(
+  readJsonSync<IInstall>(
     `${getAppDir(app)}/${isShovel() ? 'scoop-install.json' : 'install.json'}`
   )
 
@@ -44,29 +43,13 @@ export const filterDirs = (filter = '', dir = APPS_DIR): [string[], number] => {
   return [dirs, total]
 }
 
-export const scoop = async (args: string[]) => {
-  const { stdout } = Deno.run({
-    cmd: ['scoop.cmd', ...args],
-    stdout: 'piped',
-  })
-  const iter = Deno.iter(stdout)
-
-  for await (const chunk of iter) {
-    Deno.stdout.writeSync(chunk)
-  }
-}
-
-export const git = async (path: string, ...args: string[]) => {
+export const git = async (cwd: string, ...args: string[]) => {
   const output = await Deno.run({
     // https://git-scm.com/docs/git#Documentation/git.txt--Cltpathgt
-    cmd: ['git', '-C', path, ...args],
+    cmd: ['git', ...args],
+    cwd,
     stdout: 'piped',
   }).output()
 
   return new TextDecoder().decode(output).replace(/\n$/, '')
 }
-
-export const readLine = async () =>
-  ((await readLines(Deno.stdin).next()).value as string).replace('\r', '')
-export const write = (input: string) =>
-  Deno.stdout.writeSync(new TextEncoder().encode(input))

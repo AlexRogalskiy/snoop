@@ -2,8 +2,7 @@ import { listBucket, knownBucket } from './commands/bucket.ts'
 import { install } from './commands/install.ts'
 import { listApps } from './commands/list.ts'
 import { listPersists, cleanPersists } from './commands/persist.ts'
-import { scoop } from './utils.ts'
-import { outdent } from './deps.ts'
+import { outdent, run } from './deps.ts'
 
 const { args } = Deno
 
@@ -32,13 +31,13 @@ switch (args[0]) {
       case 'list':
         listPersists(args[2])
         break
+      default:
+        console.log(outdent`
+          scoop persist: cmd '${args[1] || ''}' not supported
+          Usage: scoop persist clean|list [<args>]
+        `)
     }
-
-    console.log(outdent`
-      scoop persist: cmd '${args[1] || ''}' not supported
-      Usage: scoop persist clean|list [<args>]
-    `)
     break
   default:
-    scoop(args)
+    run(['scoop.cmd', ...args])
 }

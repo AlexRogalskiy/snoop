@@ -1,5 +1,5 @@
-import { filterDirs, BUCKETS_DIR, getAppDir, git, readJson } from '../utils.ts'
-import { existsSync, cyan, yellow, outdent } from '../deps.ts'
+import { filterDirs, BUCKETS_DIR, getAppDir, git } from '../utils.ts'
+import { existsSync, cyan, yellow, outdent, readJsonSync } from '../deps.ts'
 
 export const listBucket = async (filter = '') => {
   const [buckets, total] = filterDirs(filter, BUCKETS_DIR)
@@ -29,7 +29,7 @@ export const listBucket = async (filter = '') => {
 
 export const knownBucket = () => {
   const buckets = Object.entries(
-    readJson<Record<string, string>>(`${getAppDir('scoop')}/buckets.json`)
+    readJsonSync<Record<string, string>>(`${getAppDir('scoop')}/buckets.json`)
   )
 
   console.log(outdent`

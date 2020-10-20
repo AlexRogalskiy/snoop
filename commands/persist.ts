@@ -1,5 +1,5 @@
 import { filterDirs, PERSIST_DIR } from '../utils.ts'
-import { yellow, outdent, readLine, writeStdoutSync } from '../deps.ts'
+import { yellow, outdent, readLine, writeStringSync } from '../deps.ts'
 
 export const listPersists = (filter = '') => {
   const [apps] = filterDirs(filter)
@@ -31,7 +31,7 @@ export const cleanPersists = async () => {
 
     ${uninstalled.join('\n')}
   `)
-  writeStdoutSync(yellow(`\nClean these persists [y/N]? `))
+  writeStringSync(yellow(`\nClean these persists [y/N]? `))
 
   if ((await readLine()).toLowerCase() === 'y') {
     for (const persist of uninstalled) {
